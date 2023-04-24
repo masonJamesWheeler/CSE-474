@@ -1,1 +1,69 @@
-# CSE-474
+# CSE-474: Introduction to Embedded Systems
+
+Welcome to the GitHub repository for CSE-474: Introduction to Embedded Systems! This course is offered jointly with E E 474 and covers the specification, design, development, and testing of real-time embedded system software. In this course, students work with a modern embedded microcomputer or microcontroller as a target environment for a series of laboratory projects and a comprehensive final project.
+
+## Prerequisites
+
+- CSE 143: Computer Programming II
+
+## Course Objectives
+
+By the end of the course, students will:
+
+1. Gain a solid understanding of embedded system fundamentals and concepts.
+2. Develop skills in designing and implementing embedded software solutions.
+3. Acquire hands-on experience with modern embedded microcomputers or microcontrollers.
+4. Learn to use development tools and debugging techniques for embedded systems.
+5. Understand the constraints and challenges associated with real-time systems.
+6. Work collaboratively on a comprehensive final project, integrating all course concepts.
+
+## Repository Structure
+
+This repository is organized as follows:
+
+```
+CSE-474
+├── Lab01
+│   ├── README.md
+│   └── src
+│       └── main.c
+├── Lab02
+│   ├── README.md
+│   └── src
+│       └── main.c
+├── Lab0N ...
+├── Final_Project
+│   ├── README.md
+│   └── src
+│       └── main.c
+└── README.md
+```
+
+
+- `README.md`: This file, which provides an overview of the repository and its contents.
+- `Lab0X`: Folders for each lab project, numbered sequentially (e.g., `Lab01`, `Lab02`, etc.).
+    - `README.md`: A description of the lab, its objectives, and instructions for use.
+    - `src`: The source code for the lab project.
+- `Final_Project`: Folder for the comprehensive final project.
+    - `README.md`: A description of the final project, its objectives, and instructions for use.
+    - `src`: The source code for the final project.
+
+## Getting Started
+
+1. Clone this repository to your local machine using `git clone https://github.com/yourusername/CSE-474.git`
+2. Navigate to the directory of the lab or project you want to work on.
+3. Follow the instructions in the corresponding `README.md` file for each lab/project.
+4. Build, test, and debug your embedded software solutions.
+
+## Contributing
+
+Please follow the [GitHub Flow](https://guides.github.com/introduction/flow/) workflow when contributing to this repository.
+
+1. Create a new branch for your changes: `git checkout -b new-feature-branch`
+2. Make your changes and commit them: `git commit -m "Add new feature"`
+3. Push your changes to the remote branch: `git push origin new-feature-branch`
+4. Create a pull request on GitHub to merge your changes into the main branch.
+
+## License
+
+This repository is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](LICENSE) file for details.
