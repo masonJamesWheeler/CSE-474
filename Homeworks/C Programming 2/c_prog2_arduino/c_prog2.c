@@ -3,8 +3,8 @@
  *      CSE/ECE 474 introductory C programming assignment  #2
  *      Spring 2023
  *
- *      Student Name:
- *      Student ID:
+ *      Student Name: Mason Wheeler
+ *      Student ID: 2032634
  *
  *      WRITE YOUR CODE IN THIS FILE
  *
