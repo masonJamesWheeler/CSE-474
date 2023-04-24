@@ -1,0 +1,56 @@
+Part 1.1: Enter your UW Student ID number...
+ You entered 51218
+ Your mangled SID is 12812
+
+Part 1.2: Check the bit_check() function
+
+d = 20 Hex: 14, Octal: 24
+bit_check(20,3,4): 0
+bit_check(20,3,1): -1
+bit_check(20,4,1): 1
+bit_check(20,4,4): -1
+bit_check(129753, 129753, ~129753): 1
+d = 36928 Hex: 9040, Octal: 110100
+bit_check(32768+4096+64, 4096+64, 16384): 1
+bit_check(32768+4096+64, 4096+64, 32768): 0
+
+Part 2.1: Enter a capital letter...
+ You entered: J
+Part 2.2: The next letter after J is K
+Part 2.2: The next letter after Z is -1
+
+Part 2.3: M and Q are 4 positions apart
+Part 2.3: x and Q are -27 positions apart
+
+Part 3.2:  Size of a Person is 151
+Store some data about our person...
+Part 3.2:  Size of a Person is STILL 151
+Part 3.3:  Our test person is:
+--- person report: ---
+First Name:       Blake
+Last Name:        Hannaford
+Address:          124 N. Anystreet / Busytown, WA
+Zip:              99499
+Height (m):       1.97
+Weight (kg):      81.81
+DOB 1/1/1900:     34780
+--------------------
+
+Update address to: 
+ 12903010542039840 NW Antidisetablishmentarianism Street, Apt.5/AnyTown, U.S.A.
+
+Address stored in memory: 
+ 12903010542039840 NW Antidisetablishmentarianism Street, Apt.5/AnyTown, U.S.A.
+
+The new Address is 79 characters!
+Output will be truncated to 60 characters for printing.
+
+--- person report: ---
+First Name:       Blake
+Last Name:        Hannaford
+Address:          12903010542039840 NW Antidisetablishmentarianism Street, Apt
+Zip:              99499
+Height (m):       1.97
+Weight (kg):      81.81
+DOB 1/1/1900:     34780
+--------------------
