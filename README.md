@@ -21,29 +21,28 @@ By the end of the course, I have achieved:
 
 This repository is organized as follows:
 
+```
 CSE-474
-├── Lab01
-│ ├── README.md
-│ └── src
-│ └── main.c
-├── Lab02
-│ ├── README.md
-│ └── src
-│ └── main.c
-├── Lab0N ...
+├── Lab(...)
+│   ├── README.md
+│   └── src
+├── HW(...)
+│   ├── README.md
+│   └── src
 ├── Final_Project
-│ ├── README.md
-│ └── src
-│ └── main.c
+│   ├── README.md
+│   └── src
 └── README.md
+```
 
-markdown
-Copy code
 
 
 - `README.md`: This file, which provides an overview of the repository and its contents.
-- `Lab0X`: Folders for each lab project, numbered sequentially (e.g., `Lab01`, `Lab02`, etc.).
+- `Lab(...)`: Folders for each lab project, numbered sequentially (e.g., `Lab01`, `Lab02`, etc.).
     - `README.md`: A description of the lab, its objectives, and instructions for use.
+- `HW(...)`: Folders for each homework assignment, numbered sequentially (e.g., `HW1`, `HW2`, etc.).
+  - `README.md`: A description of the homework assignment, its objectives, and instructions for use.
+  - `src`: The source code for the homework assignment.
     - `src`: The source code for the lab project.
 - `Final_Project`: Folder for the comprehensive final project.
     - `README.md`: A description of the final project, its objectives, and instructions for use.
