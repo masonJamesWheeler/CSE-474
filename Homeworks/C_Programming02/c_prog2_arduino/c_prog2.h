@@ -1,15 +1,17 @@
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 #ifndef C_PROG2_H_INCLUDED
 #define C_PROG2_H_INCLUDED
+// Maximum length of the formatted person report
+#define PERSONBUF_SIZE 300
 
 /*
  *      CSE/ECE 474 introductory C programming assignment  #2
  *      Spring 2023
  *
- *      Student Name:
- *      Student ID:
+ *      Student Name: Mason Wheeler
+ *      Student ID: 2032634
  *
  *      WRITE ANY NEW FUNCTION PROTOTYPES IN THIS FILE
  *      
@@ -18,6 +20,10 @@
  */
 #include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
 
 /*************************************************************************
    Part 2.1:  Bitwise operations
@@ -44,23 +50,24 @@ int ldif(char, char);
 // Modify this struct definition according to the instructions
 // HINT: How long do each of these fields need to be?
 typedef struct Person {
-    char FirstName[1];
-    char LastName[1];
-    char StreetAddr[1];
-    char ZipCode[1];
+    char FirstName[21];
+    char LastName[31];
+    char StreetAddr[81];
+    char ZipCode[6];
     float Height;
     float Weight;
     long int DBirth;
-} Person ;
+} Person;
 
 int personSize(Person);
 
 void float_to_ints(float, int*);
 
-// Modify this definition 
+
+// Modify this definition
 // NOTE: This is used to store the output string of per_print.
 // How long does this need to be?
-char* personbuf;
+char personbuf[PERSONBUF_SIZE];
 
 char* per_print(Person*, char*);
 

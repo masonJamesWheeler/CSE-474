@@ -9,7 +9,7 @@
 /*************************************************************************
 * main() runS all demos and tests of the parts of assignment 2.
 *
-* Use these to test your code.  
+* Use these to test your code.
 * DO NOT MODIFY THIS FILE
 * See sample_output.txt to see the expected output of the tests.
 *************************************************************************/
@@ -20,6 +20,7 @@ void setup() {
     long sid;   // student ID #
     Serial.begin(115200);
 
+
     // Part 1.1
     Serial.println( "Part 1.1: Enter your UW Student ID number...");
     while(Serial.available() == 0){
@@ -28,7 +29,7 @@ void setup() {
     // Read user input
     sid = (long) trunc(Serial.parseFloat());
     Serial.print(" You entered "); Serial.println(sid);
-    
+
     long msid =  mangle(sid);
     Serial.print(" Your mangled SID is "); Serial.println(msid);
     Serial.println();
@@ -44,33 +45,33 @@ void setup() {
     // The examples
     sprintf(buf, "d = %u Hex: %x, Octal: %o\n", d,d,d);
     Serial.print(buf);
-    
+
     sprintf(buf, "bit_check(%d,%d,%d): %d\n", d, onm1, ofm1, bit_check(d,onm1,ofm1)); //Example 1
     Serial.print(buf);
-    
+
     sprintf(buf, "bit_check(%d,%d,%d): %d\n", d, onm1, ofm2, bit_check(d,onm1,ofm2)); //Example 2
     Serial.print(buf);
-    
+
     sprintf(buf, "bit_check(%d,%d,%d): %d\n", d, onm2, ofm2, bit_check(d,onm2,ofm2)); //Example 3
     Serial.print(buf);
-    
+
     sprintf(buf, "bit_check(%d,%d,%d): %d\n", d, ofm1, ofm1, bit_check(d,ofm1,ofm1)); //Example 4
     Serial.print(buf);
-    
+
     sprintf(buf, "bit_check(129753, 129753, ~129753): %d\n", bit_check(129753, 129753,
-        ~129753)); // 1
+                                                                       ~129753)); // 1
     Serial.print(buf);
 
     d = 32768+4096+64;
     sprintf(buf, "d = %u Hex: %x, Octal: %o\n", d,d,d);
     Serial.print(buf);
-    
-    sprintf(buf, "bit_check(32768+4096+64, 4096+64, 16384): %d\n", 
-        bit_check(32768+4096+64, 4096+64, 16384)); // 1
-    Serial.print(buf); 
-    
-    sprintf(buf, "bit_check(32768+4096+64, 4096+64, 32768): %d\n", 
-        bit_check(32768+4096+64, 4096+64, 32768)); // 0
+
+    sprintf(buf, "bit_check(32768+4096+64, 4096+64, 16384): %d\n",
+            bit_check(32768+4096+64, 4096+64, 16384)); // 1
+    Serial.print(buf);
+
+    sprintf(buf, "bit_check(32768+4096+64, 4096+64, 32768): %d\n",
+            bit_check(32768+4096+64, 4096+64, 32768)); // 0
     Serial.println(buf);
 
     // Part 2.1
@@ -78,11 +79,11 @@ void setup() {
     Serial.println("Part 2.1: Enter a capital letter...");
     while(Serial.available() == 0){
     }
-    
+
     // Read the input as a string and extract the first character
     String input = Serial.readString();
     ctest = input[0];
-    
+
     char * ptest = pmatch(ctest);
     if (ptest != NULL){
         sprintf(buf, " You entered: %1c\n", *ptest);
@@ -90,35 +91,35 @@ void setup() {
         int nl = nlet(ptest);
         if (nl != -1){
             sprintf(buf, "Part 2.2: The next letter after %1c is %c\n", *ptest,
-                nlet(ptest));
+                    nlet(ptest));
             Serial.print(buf);
         }
     }
-    else { 
+    else {
         Serial.println(" You did NOT enter a capital letter!\n");
     }
     ctest = 'Z';
     ptest = &ctest;
-    sprintf (buf, "Part 2.2: The next letter after %1c is %d\n\n", *ptest, 
-        nlet(ptest));
+    sprintf (buf, "Part 2.2: The next letter after %1c is %d\n\n", *ptest,
+             nlet(ptest));
     Serial.print(buf);
-    
+
     sprintf (buf, "Part 2.3: M and Q are %d positions apart\n", ldif('M', 'Q'));
     Serial.print(buf);
-    
+
     sprintf (buf, "Part 2.3: x and Q are %d positions apart\n\n", ldif('x', 'Q'));
     Serial.print(buf);
 
     // Part 3   Structs
     // Example of declaring and initializing values in a struct
     Person testp = {
-        .FirstName={0},
-        .LastName={0},
-        .StreetAddr={0},
-        .ZipCode={0},
-        .Height=0.0,
-        .Weight=0.0,
-        .DBirth=0
+            .FirstName={0},
+            .LastName={0},
+            .StreetAddr={0},
+            .ZipCode={0},
+            .Height=0.0,
+            .Weight=0.0,
+            .DBirth=0
     };
 
     int persize = personSize(testp);
@@ -139,7 +140,7 @@ void setup() {
     if(sizeof(testp.LastName) > 29){
         strcpy(testp.LastName, "Hannaford");
     } else{
-       Serial.println("Person not defined correctly\n");
+        Serial.println("Person not defined correctly\n");
     }
 
     if(sizeof(testp.StreetAddr) > 78){
@@ -149,7 +150,7 @@ void setup() {
     }
 
     if(sizeof(testp.ZipCode) == 6){
-        strcpy(testp.ZipCode, "99499"); 
+        strcpy(testp.ZipCode, "99499");
     } else{
         Serial.println("Person not defined correctly\n");
     }
@@ -158,7 +159,7 @@ void setup() {
     testp.Weight = 180.0/2.2;  // 180 lbs in kg
     // born 24-Mar-1995 (see  https://www.timeanddate.com/date/duration.html)
     testp.DBirth = 34780;
-    
+
     // Check size again after adding data
     persize = personSize(testp);
     sprintf(buf, "Part 3.2:  Size of a Person is STILL %d\n",persize);
@@ -180,6 +181,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+    // put your main code here, to run repeatedly:
 
 }
