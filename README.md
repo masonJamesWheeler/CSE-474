@@ -1,4 +1,4 @@
-# CSE-474: My Introduction to Embedded Systems Repository
+# CSE-474: Introduction to Embedded Systems Repository
 
 Welcome to my GitHub repository for CSE-474: Introduction to Embedded Systems! In this course, I have learned the specification, design, development, and testing of real-time embedded system software. Throughout the course, I have worked with a modern embedded microcomputer or microcontroller as a target environment for a series of laboratory projects and a comprehensive final project.
 
