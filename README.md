@@ -1,6 +1,6 @@
-# CSE-474: Introduction to Embedded Systems
+# CSE-474: My Introduction to Embedded Systems Repository
 
-Welcome to the GitHub repository for CSE-474: Introduction to Embedded Systems! This course is offered jointly with E E 474 and covers the specification, design, development, and testing of real-time embedded system software. In this course, students work with a modern embedded microcomputer or microcontroller as a target environment for a series of laboratory projects and a comprehensive final project.
+Welcome to my GitHub repository for CSE-474: Introduction to Embedded Systems! In this course, I have learned the specification, design, development, and testing of real-time embedded system software. Throughout the course, I have worked with a modern embedded microcomputer or microcontroller as a target environment for a series of laboratory projects and a comprehensive final project.
 
 ## Prerequisites
 
@@ -8,36 +8,37 @@ Welcome to the GitHub repository for CSE-474: Introduction to Embedded Systems! 
 
 ## Course Objectives
 
-By the end of the course, students will:
+By the end of the course, I have achieved:
 
-1. Gain a solid understanding of embedded system fundamentals and concepts.
-2. Develop skills in designing and implementing embedded software solutions.
-3. Acquire hands-on experience with modern embedded microcomputers or microcontrollers.
-4. Learn to use development tools and debugging techniques for embedded systems.
-5. Understand the constraints and challenges associated with real-time systems.
-6. Work collaboratively on a comprehensive final project, integrating all course concepts.
+1. A solid understanding of embedded system fundamentals and concepts.
+2. Skills in designing and implementing embedded software solutions.
+3. Hands-on experience with modern embedded microcomputers or microcontrollers.
+4. Knowledge of development tools and debugging techniques for embedded systems.
+5. Understanding the constraints and challenges associated with real-time systems.
+6. Collaborative work on a comprehensive final project, integrating all course concepts.
 
 ## Repository Structure
 
 This repository is organized as follows:
 
-```
 CSE-474
 ├── Lab01
-│   ├── README.md
-│   └── src
-│       └── main.c
+│ ├── README.md
+│ └── src
+│ └── main.c
 ├── Lab02
-│   ├── README.md
-│   └── src
-│       └── main.c
+│ ├── README.md
+│ └── src
+│ └── main.c
 ├── Lab0N ...
 ├── Final_Project
-│   ├── README.md
-│   └── src
-│       └── main.c
+│ ├── README.md
+│ └── src
+│ └── main.c
 └── README.md
-```
+
+markdown
+Copy code
 
 
 - `README.md`: This file, which provides an overview of the repository and its contents.
@@ -66,4 +67,4 @@ Please follow the [GitHub Flow](https://guides.github.com/introduction/flow/) wo
 
 ## License
 
-This repository is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](LICENSE) file for details.
+This repository is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](LICENSE) file for details
