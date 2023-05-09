@@ -255,3 +255,6 @@ void play_tone(uint16_t frequency, uint32_t duration) {
 void silence() {
   OCR4A = 0; // Set the duty cycle to 0% to silence the speaker
 }
+
+
+
