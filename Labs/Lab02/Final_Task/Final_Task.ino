@@ -1,21 +1,76 @@
+#include <Arduino.h>
+#define LED_PIN_47_BIT 0
+#define LED_PIN_48_BIT 1
+#define LED_PIN_49_BIT 2
+#define OP_DECODEMODE  8
+#define OP_SCANLIMIT   10
+#define OP_SHUTDOWN    11
+#define OP_DISPLAYTEST 14
+#define OP_INTENSITY   10
+
+#define SPEAKER_PIN 6
 // Global variables
 unsigned long previousMillisA = 0;
 unsigned long previousMillisB = 0;
 unsigned long previousMillisC = 0;
 unsigned long noteStartTime = 0;
 
+// Add a new global variable
+unsigned long noteGapStartTime = 0;
+bool gapState = false;
+
+// LED matrix and thumbstick control variables
+int DIN = 22; // Changed from 47
+int CS =  24; // Changed from 49
+int CLK = 26; // Changed from 51
+
+int THUMBSTICK_X = A0;
+int THUMBSTICK_Y = A1;
+byte spidata[2];
+
+
+// Function prototypes
+void spiTransfer(volatile byte opcode, volatile byte data);
+int convertToIndex(int value, bool invert = false);
+
+// Function to transfer data to the LED matrix
+void spiTransfer(volatile byte opcode, volatile byte data){
+  int offset = 0;
+  int maxbytes = 2;
+  
+  // Clear the SPI data buffer
+  for(int i = 0; i < maxbytes; i++) {
+    spidata[i] = (byte)0;
+  }
+
+  // Load SPI data
+  spidata[offset+1] = opcode+1;
+  spidata[offset] = data;
+
+  // Send SPI data
+  digitalWrite(CS, LOW);
+  for(int i=maxbytes;i>0;i--)
+    shiftOut(DIN,CLK,MSBFIRST,spidata[i-1]);
+  digitalWrite(CS,HIGH);
+}
+
+
+// Function to convert the thumbstick value to a row or column index
+int convertToIndex(int value, bool invert) {
+  if (invert) {
+    value = 1023 - value;
+  }
+  int index = (int)((value / 1023.0) * 8);
+  // Limit the index to be within the valid range (0-7)
+  index = min(max(index, 0), 7);
+  return index;
+}
+
 // Add two new global variables
 bool taskACompleted = false;
 bool taskBCompleted = false;
 
-
-#define LED_PIN_47_BIT 0
-#define LED_PIN_48_BIT 1
-#define LED_PIN_49_BIT 2
-
-#define SPEAKER_PIN 6
-
-const unsigned long intervalA = 1000;
+const unsigned long intervalA = 333;
 const unsigned long intervalB[] = {2000, 10000, 1000}; // Task B durations
 const unsigned long noteDurations[] = {500, 500, 500, 500, 500, 500, 1000, 500, 500, 1000, 500, 500, 1000, 500, 500, 500, 500, 500, 500, 1000, 500, 500, 500, 500, 500, 1000}; // Note durations
 uint8_t currentNote = 0;
@@ -40,13 +95,42 @@ void setup() {
   // Initialize Task A
   taskAEnabled = true;
   taskBEnabled = false;
+
+  pinMode(DIN, OUTPUT);
+  pinMode(CS, OUTPUT);
+  pinMode(CLK, OUTPUT);
+  digitalWrite(CS, HIGH);
+
+   // Initialize the LED matrix
+  spiTransfer(OP_DISPLAYTEST,0);
+  spiTransfer(OP_SCANLIMIT,7);
+  spiTransfer(OP_DECODEMODE,0);
+  spiTransfer(OP_SHUTDOWN,1);
+
+  // Clear the display
+  for (int i = 0; i < 8; i++) {
+    spiTransfer(i, 0);
+  }
+
 }
 
 void loop() {
   controlTasks();
   runTaskA(); // This will run continuously
   runTaskB();
+
+  int row = convertToIndex(analogRead(THUMBSTICK_Y));
+  int col = convertToIndex(analogRead(THUMBSTICK_X), true);
+
+  // Light up the LED at the specified row and column
+  spiTransfer(row, 1 << col);
+
+  delay(50); // Add this delay to allow the LED to turn on completely
+
+  // Turn off the LED at the specified row and column
+  spiTransfer(row, 0);
 }
+
 
 void controlTasks() {
   unsigned long currentMillisC = millis();
@@ -62,12 +146,15 @@ void controlTasks() {
       }
       break;
     case 1:
-      taskAEnabled = false;
-      taskBEnabled = true;
-      if (taskBCompleted) {
-        taskBCompleted = false;
-        previousMillisC = currentMillisC;
-        phase = 2;
+      // Add an extra intervalA duration for the third LED to stay on
+      if (currentMillisC - previousMillisC >= intervalA) {
+        taskAEnabled = false;
+        taskBEnabled = true;
+        if (taskBCompleted) {
+          taskBCompleted = false;
+          previousMillisC = currentMillisC;
+          phase = 2;
+        }
       }
       break;
     case 2:
@@ -113,6 +200,7 @@ void runTaskA() {
   }
 }
 
+// runTaskB() function
 void runTaskB() {
   if (!taskBEnabled) {
     OCR4A = 0; // Set duty cycle to 0% to silence the speaker
@@ -121,21 +209,24 @@ void runTaskB() {
 
   unsigned long currentMillisB = millis();
 
-  if (currentMillisB - previousMillisB >= noteDurations[currentNote]) {
-    previousMillisB = currentMillisB;
-
-    play_tone(frequencies[currentNote], noteDurations[currentNote]);
-    currentNote = (currentNote + 1) % (sizeof(noteDurations) / sizeof(noteDurations[0]));
-
-    // Set taskBCompleted to true when the song has completed
-    if (currentNote == 0) {
-      taskBCompleted = true;
+  if (gapState) {
+    if (currentMillisB - noteGapStartTime >= 100) { // 100 ms gap between notes
+      gapState = false;
+      play_tone(frequencies[currentNote], noteDurations[currentNote]);
+      noteStartTime = currentMillisB;
     }
-  }
+  } else {
+    if (currentMillisB - noteStartTime >= noteDurations[currentNote]) {
+      silence();
+      noteGapStartTime = currentMillisB;
+      gapState = true;
+      currentNote = (currentNote + 1) % (sizeof(noteDurations) / sizeof(noteDurations[0]));
 
-  // Silence the speaker after the note has played for the specified duration
-  if (currentMillisB - noteStartTime >= noteDurations[currentNote - 1]) {
-    silence();
+      // Set taskBCompleted to true when the song has completed
+      if (currentNote == 0) {
+        taskBCompleted = true;
+      }
+    }
   }
 }
 
@@ -164,4 +255,3 @@ void play_tone(uint16_t frequency, uint32_t duration) {
 void silence() {
   OCR4A = 0; // Set the duty cycle to 0% to silence the speaker
 }
-
