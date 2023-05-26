@@ -1,14 +1,3 @@
-/**
- * @file demo2.ino
- * @authors Peter Gunarso, Sunny Hu
- * @brief Arduino code for demo 2 (Task 1 & 2) using SRRI scheduler
- * @version 0.1
- * @date 2021-05-19
- * 
- * @copyright Copyright (c) 2021
- * 
- */
-
 #include "SRRI.h"
 
 int reset1 = 0;
@@ -57,11 +46,39 @@ void loop() {
   }
 }
 
-/// Timer 3 Interrupt, sets sFlag
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the Timer 3 Interrupt function.
+ * 
+ * This function is called by the Timer 3 Interrupt and sets the sFlag to DONE.
+ * 
+ */
+
+/**
+ * @brief Timer 3 Interrupt function.
+ * 
+ * This function is called by the Timer 3 Interrupt and sets the sFlag to DONE.
+ * 
+ */
 ISR(TIMER3_COMPA_vect) {
-  sFlag = DONE;
+  sFlag = DONE; // Set the sFlag to DONE
 }
 
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the sleep_474 function.
+ * 
+ * This function puts the current task to sleep for a specified amount of time.
+ * 
+ */
+
+/**
+ * @brief Puts the current task to sleep for a specified amount of time.
+ * 
+ * @param t The amount of time to sleep for, in milliseconds.
+ * 
+ * @return void
+ */
 void sleep_474(long t) {
   // sleep array @ [function index], set value to t
   sleepArr[currTask] = t;
@@ -70,23 +87,42 @@ void sleep_474(long t) {
   return;
 }
 
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the schedule_sync function.
+ * 
+ * This function updates the remaining sleep time for each sleeping task and wakes up any sleeping tasks
+ * whose remaining sleep time has elapsed. It also updates the timeArr for each task and resets the sFlag.
+ * 
+ */
+
+/**
+ * @brief Updates the remaining sleep time for each sleeping task and wakes up any sleeping tasks
+ * whose remaining sleep time has elapsed. It also updates the timeArr for each task and resets the sFlag.
+ * 
+ * @return void
+ */
 void schedule_sync() {
+  // wait for sFlag to be set to DONE
   while (sFlag == PENDING) {
     3 + 5;
   }
+
+  // update sleep time and wake up sleeping tasks
   for (int i = 0; i < NTASKS; i++) {
     // update remaining sleep time
     if (stateArr[i] == SLEEPING) {
       sleepArr[i] -= 2;
       // wake up any sleeping tasks
       if (sleepArr[i] < 2) {
-        // reset to t = 0 in sleep array (not sure if needed)
+        // reset to t = 0 in sleep array
         sleepArr[i] = 0;
         // change corresponding state from SLEEPING to READY
         stateArr[i] = READY;
       }
     }
 
+    // update timeArr for each task
     timeArr[i] += 2;
   }
 
@@ -94,14 +130,44 @@ void schedule_sync() {
   sFlag = PENDING;
   return;
 }
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the setOC4AFreq function.
+ * 
+ * This function sets the OCR4A to make the clock cycle frequency the same as the input frequency.
+ * 
+ */
 
-// sets the OCR4A to make the clock cycle frequency
-// the same as the input freq
+/**
+ * @brief Sets the OCR4A to make the clock cycle frequency the same as the input frequency.
+ * 
+ * @param freq The desired frequency of the clock cycle.
+ * 
+ * @return void
+ */
 void setOC4AFreq(uint32_t freq) {
+  // Calculate the prescaler value based on the desired frequency
   PRESCALER = freq == 0 ? 0 : 16000000 / (2 * freq);
+  
+  // Reset the timer counter
   TIMER_COUNTER = 0;
 }
 
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the task1 function.
+ * 
+ * This function flashes an LED on pin 47 for a certain duration, and then turns it off for a certain duration.
+ * 
+ */
+
+/**
+ * @brief Flashes an LED on pin 47 for a certain duration, and then turns it off for a certain duration.
+ * 
+ * @param None
+ * 
+ * @return void
+ */
 void task1() {
   // reset everything given a reset signal
   if (reset1) {
@@ -118,12 +184,14 @@ void task1() {
     return;
   }
 
+  // turn off led for PAUSE_DURATION
   if (timeArr[currTask] < (2 * FLASH_DURATION) + 1) {
     LED_PORT |= BIT2;
     sleep_474(750);
     return;
   }
 
+  // reset timeArr after 1000ms
   if (timeArr[currTask] >= 1000) {
     timeArr[currTask]= 0;
   }
@@ -131,7 +199,23 @@ void task1() {
   return;
 }
 
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the task2 function.
+ * 
+ * This function plays a melody using the setOC4AFreq function.
+ * 
+ */
+
+/**
+ * @brief Plays a melody using the setOC4AFreq function.
+ * 
+ * @param None
+ * 
+ * @return void
+ */
 void task2() {
+  // reset everything given a reset signal
   if (reset2) {
     setOC4AFreq(0);
     timeArr[currTask] = 0;
@@ -171,7 +255,22 @@ void task2() {
     timeArr[currTask] = 0;
   }
 }
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the interruptSetup function.
+ */
 
+/**
+ * @brief Sets up the timer interrupt for the speaker.
+ * 
+ * This function sets up the timer interrupt for the speaker by configuring the timer
+ * to work in CTC mode, enabling interrupts on counter A, setting the frequency of the timer,
+ * and enabling interrupts.
+ * 
+ * @param None
+ * 
+ * @return void
+ */
 void interruptSetup() {
   // reset settings
   TCCR3A = 0;
@@ -196,10 +295,26 @@ void interruptSetup() {
   SREG |= (1<<7);
 }
 
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the speakerSetup function.
+ */
+
+/**
+ * @brief Sets up the speaker timer for generating sound.
+ * 
+ * This function sets up the speaker timer to work in CTC mode, toggle mode, and with a specific
+ * prescaler. It also sets the output pin for the speaker.
+ * 
+ * @param None
+ * 
+ * @return void
+ */
 void speakerSetup() {
   // clear timer settings
   TIMER_REG_A = 0;
   TIMER_REG_B = 0;
+
   // set our timer to work in CTC mode
   TIMER_REG_A |= (0 << WGM41) | (0 << WGM40);
   TIMER_REG_B |= (0 << WGM43) | (1 << WGM42);
@@ -210,12 +325,6 @@ void speakerSetup() {
   // disable interrupts on the timer
   TIMSK4 = 0;
 
-  // set the prescaler of the timer,
-  // which follows the formula:
-  //
-  //  f_out = f_i/o / 2 * N * (PRESCALER + 1)
-  //
-  // because f_i/o = 16Mhz, we'll just set N = 1
   TIMER_REG_B |= (0 << CS42) | (0 << CS41) | (1 << CS40);
   PRESCALER = 0;
   TIMER_COUNTER = 0;
@@ -225,7 +334,22 @@ void speakerSetup() {
   SPEAKER_DDR |= BIT3;
 }
 
+/**
+ * @file demo2.ino
+ * @brief This file contains the implementation of the ledSetup function.
+ */
+
+/**
+ * @brief Sets up the LED output pin for task1.
+ * 
+ * This function sets up the LED output pin for task1 by setting the corresponding
+ * pin in the LED_DDR register to be an output pin.
+ * 
+ * @param None
+ * 
+ * @return void
+ */
 void ledSetup() {
   // set output pins for task1
-  LED_DDR |= BIT2;
+  LED_DDR |= BIT2; // set bit 2 in LED_DDR to 1 to make it an output pin
 }
