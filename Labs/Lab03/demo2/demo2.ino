@@ -1,3 +1,11 @@
+/**
+ * @file demo2.ino
+ * @brief This file was authored by Mason Wheeler and Joey Pirich.
+ * 
+ * This file contains the implementation of a scheduler loop that runs multiple tasks in a cooperative multitasking fashion.
+ * It also includes functions for putting tasks to sleep and waking them up after a specified amount of time.
+ * 
+ */
 #include "SRRI.h"
 
 int reset1 = 0;

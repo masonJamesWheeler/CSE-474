@@ -1,3 +1,9 @@
+/**
+ * @file demo4.ino
+ * @brief This file contains the code for a scheduler that manages multiple tasks on an Arduino board. 
+ * The authors of this file are Mason Wheeler and Joey Pirich.
+ */
+
 #include "SRRI.h"
 
 int reset1 = 0;

@@ -1,3 +1,9 @@
+/**
+ * @file demo6.ino
+ * @brief This file contains the code for a scheduler loop that runs multiple tasks on an Arduino board. 
+ * The authors of this file are Mason Wheeler and Joey Pirich.
+ */
+
 #include "DDS.h"
 
 int reset1 = 0;

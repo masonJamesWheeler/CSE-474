@@ -1,3 +1,8 @@
+/**
+ * @file demo5.ino
+ * @brief This file was authored by Mason Wheeler and Joey Pirich. It contains the implementation of a scheduler loop and various helper functions for task management. 
+ */
+
 #include "DDS.h"
 
 int reset1 = 0;
