@@ -37,8 +37,8 @@
 #define ADURATION 2000
 #define CDURATION 10000
 #define PAUSE_DURATION 4000
-#define PICKUP_TIME (NFREQ * PLAY_DURATION) + PAUSE_DURATION
-#define TASK2_DURATION (2 * (NFREQ * PLAY_DURATION) + PAUSE_DURATION)
+#define PICKUP_TIME (NMELODY * PLAY_DURATION) + PAUSE_DURATION
+#define TASK2_DURATION (2 * (NMELODY * PLAY_DURATION) + PAUSE_DURATION)
 #define SMILE_DURATION 2000
 #define PAUSE_DURATION_T5 3000
 
@@ -56,7 +56,7 @@
 #define NOTE_B  494
 #define NOTE_C5 523
 
-#define NFREQ long(72)
+#define NMELODY long(72)
 int melody[] = {
   NOTE_E, NOTE_E, 0, NOTE_E, 0, NOTE_C, NOTE_E, 0,
   NOTE_G, 0, 0,  0, NOTE_G, 0, 0, 0,
@@ -85,10 +85,10 @@ byte seven_seg_digits[10][7] = { { 1,1,1,1,1,1,0 },  // = 0
                                  };
 
 /// Codes used to display a smile on 7-segment display
-byte smile_seg[4][7] = { { 0,0,0,0,1,0,0 },  // = right
-                         { 1,1,0,1,0,1,0 },  // = eye
-                         { 1,1,0,1,0,1,0 },  // = eye
-                         { 0,0,1,0,0,0,0 },  // = left
+byte smile_seg[4][7] = { { 0,1,0,0,1,0,1 },  // = right
+                         { 1,0,0,1,0,0,0 },  // = eye
+                         { 1,0,0,1,0,0,0 },  // = eye
+                         {0,0,1,0,0,1,1 },  // = left
                        };
 
 typedef enum {READY, RUNNING, SLEEPING, DEAD} STATE;
