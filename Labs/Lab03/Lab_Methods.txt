@@ -1,0 +1,68 @@
+The Lab Report for Lab 3
+
+Abstract:
+    In Lab 3 the team was tasked with implementing several simultaneous tasks using different
+     schedulers on an Arduino Mega Microcontroller board. The tasks included implementing and
+      explaining a round-robin (RR) non-preemptive scheduler, a RR scheduler using function
+       pointers and timer synchronization, a scheduler using Task Control Blocks (TCBs) for each
+    task, and a simple Interrupt Service Routine (ISR). The team successfully completed the lab,
+     demonstrating their ability to manage multiple tasks, implement different types of schedulers,
+    and use hardware precision for scheduler cycle synchronization.
+
+Introduction:
+    This report outlines the team's approach and solutions to Lab 3. The lab required us to implement
+     several tasks simultaneously using different schedulers. These tasks ranged from flashing an
+      external LED, emitting a theme song through a speaker, displaying a count on a 7-segment LED
+       display, to implementing a supervisor task that controls the start and stop of other tasks.
+        We implemented this all using an Arduino Mega 2560, LEDs, resistors, a speaker, and a
+         7-segment LED display to accomplish these tasks. The team's solutions demonstrate their
+          understanding of round-robin schedulers, task control blocks, and interrupt service routines,
+           as well as their ability to apply these concepts in a practical setting.
+
+Methods:
+
+To implement the different schedulers, we first created a set of tasks that would run simultaneously.
+ These tasks included flashing an external LED, emitting a theme song through a speaker, displaying a
+  count on a 7-segment LED display, and implementing a supervisor task that controls the start and stop
+   of other tasks. We then implemented the following schedulers:
+
+1. Round-robin (RR) non-preemptive scheduler:
+    We implemented this scheduler by creating a loop that iterates through each task and runs it for a
+     fixed amount of time before moving on to the next task. This scheduler is non-preemptive, meaning
+      that a task will run until it completes or until its time slice is up.
+
+2. RR scheduler using function pointers and timer synchronization:
+    This scheduler is similar to the non-preemptive scheduler, but it uses function pointers to call each
+     task and timer synchronization to ensure that each task runs for the same amount of time.
+
+3. Scheduler using Task Control Blocks (TCBs) for each task:
+    For this scheduler, we created a TCB for each task that contained information about the task's state,
+     priority, and execution time. We then implemented a priority-based scheduler that would run the task
+      with the highest priority first.
+
+4. Simple Interrupt Service Routine (ISR):
+    Finally, we implemented a simple ISR that would run a task whenever a hardware interrupt occurred.
+     We used this ISR to flash an external LED whenever a button was pressed.
+
+Throughout the implementation of these schedulers, we made use of hardware precision for scheduler cycle
+ synchronization. This allowed us to ensure that each task ran for the same amount of time and that the
+  overall system was synchronized and running smoothly.
+
+Procedures and Results:
+
+To begin the lab, we first created a set of tasks that would run simultaneously. These tasks included flashing an external LED, emitting the Mario Theme Song through a speaker, displaying a count on a 7-segment LED display, and implementing a supervisor task that controls the start and stop of other tasks.
+
+Next, we implemented four different schedulers to manage these tasks. The first scheduler was a round-robin (RR) non-preemptive scheduler, which we implemented by creating a loop that iterates through each task and runs it for a fixed amount of time before moving on to the next task. This scheduler is non-preemptive, meaning that a task will run until it completes or until its time slice is up.
+
+The second scheduler was a RR scheduler using function pointers and timer synchronization. This scheduler is similar to the non-preemptive scheduler, but it uses function pointers to call each task and timer synchronization to ensure that each task runs for the same amount of time.
+
+The third scheduler was a scheduler using Task Control Blocks (TCBs) for each task. For this scheduler, we created a TCB for each task that contained information about the task's state, priority, and execution time. We then implemented a priority-based scheduler that would run the task with the highest priority first.
+
+Finally, we implemented a simple Interrupt Service Routine (ISR) that would run a task whenever a hardware interrupt occurred. We used this ISR to flash an external LED whenever a button was pressed.
+
+Throughout the implementation of these schedulers, we made use of hardware precision for scheduler cycle synchronization. This allowed us to ensure that each task ran for the same amount of time and that the overall system was synchronized and running smoothly.
+
+Overall, the team successfully completed the lab, demonstrating their ability to manage multiple tasks, implement different types of schedulers, and use hardware precision for scheduler cycle synchronization.        
+
+Code Documentation:
+Here is a breakdown of the different functions we used in the code to implement the different schedulers:

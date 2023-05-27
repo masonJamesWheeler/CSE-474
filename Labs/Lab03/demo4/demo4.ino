@@ -165,13 +165,13 @@ void task1() {
 
   // flash led on pin 47 for FLASH_DURATION
   if (timeArr[currTask] < (1 * FLASH_DURATION) + 1) {
-    LED_PORT &= ~BIT2;
+    LED_PORT |= BIT2;
     sleep_474(250);
     return;
   }
 
   if (timeArr[currTask] < (2 * FLASH_DURATION) + 1) {
-    LED_PORT |= BIT2;
+    LED_PORT &= ~BIT2;
     sleep_474(750);
     return;
   }

@@ -1,3 +1,48 @@
+/**
+ * @file SRRI.h
+ * @brief Header file containing definitions and function prototypes for the SRRI project
+ * 
+ * This file contains definitions for musical notes as frequencies, the size of the melody array, an array of notes that make up a melody,
+ * bit masks, timer registers, LED and speaker ports, and durations for flashing, playing, and pausing. It also contains a lookup table for 
+ * the 7-segment display and function prototypes for sleeping, scheduling tasks, and setting the frequency of the output compare register.
+ * 
+ * @authors
+ *  - Mason Wheeler
+ * - Joey Pirich
+ */
+
+// Defines musical notes as frequencies
+#define NOTE_C  262
+#define NOTE_CS 277
+#define NOTE_D  294
+#define NOTE_DS 311
+#define NOTE_E  330
+#define NOTE_F  349
+#define NOTE_FS 370
+#define NOTE_G  392
+#define NOTE_GS 415
+#define NOTE_A  440
+#define NOTE_AS 466
+#define NOTE_B  494
+#define NOTE_C5 523
+
+// Defines the size of the melody array
+#define NMELODY 72
+
+// An array of notes that make up a melody
+int melody[] = {
+  NOTE_E, NOTE_E, 0, NOTE_E, 0, NOTE_C, NOTE_E, 0,
+  NOTE_G, 0, 0,  0, NOTE_G, 0, 0, 0,
+  NOTE_C5, 0, 0, NOTE_G, 0, 0, NOTE_E, 0,
+  0, NOTE_A, 0, NOTE_B, 0, NOTE_AS, NOTE_A, 0,
+  NOTE_G, NOTE_E, NOTE_G, NOTE_A, 0, NOTE_F, NOTE_G, 0,
+  NOTE_E, 0, NOTE_C, NOTE_D, NOTE_B, 0, 0, NOTE_C5,
+  0, 0, NOTE_G, 0, 0, NOTE_E, 0, 0,
+  NOTE_G, 0, 0, NOTE_A, 0, NOTE_F, NOTE_G, 0,
+  NOTE_E, 0, NOTE_C, NOTE_D, NOTE_B, 0, 0, NOTE_C5
+};
+
+
 #define BIT0 1<<0
 #define BIT1 1<<1
 #define BIT2 1<<2
@@ -29,36 +74,7 @@
 #define PAUSE_DURATION 4000
 #define PICKUP_TIME (NMELODY * PLAY_DURATION) + PAUSE_DURATION
 
-
-#define NOTE_C  262
-#define NOTE_CS 277
-#define NOTE_D  294
-#define NOTE_DS 311
-#define NOTE_E  330
-#define NOTE_F  349
-#define NOTE_FS 370
-#define NOTE_G  392
-#define NOTE_GS 415
-#define NOTE_A  440
-#define NOTE_AS 466
-#define NOTE_B  494
-#define NOTE_C5 523
-
-#define NMELODY 72
-int melody[] = {
-  NOTE_E, NOTE_E, 0, NOTE_E, 0, NOTE_C, NOTE_E, 0,
-  NOTE_G, 0, 0,  0, NOTE_G, 0, 0, 0,
-  NOTE_C5, 0, 0, NOTE_G, 0, 0, NOTE_E, 0,
-  0, NOTE_A, 0, NOTE_B, 0, NOTE_AS, NOTE_A, 0,
-  NOTE_G, NOTE_E, NOTE_G, NOTE_A, 0, NOTE_F, NOTE_G, 0,
-  NOTE_E, 0, NOTE_C, NOTE_D, NOTE_B, 0, 0, NOTE_C5,
-  0, 0, NOTE_G, 0, 0, NOTE_E, 0, 0,
-  NOTE_G, 0, 0, NOTE_A, 0, NOTE_F, NOTE_G, 0,
-  NOTE_E, 0, NOTE_C, NOTE_D, NOTE_B, 0, 0, NOTE_C5
-};
-
-
-/// All codes for digits 0-9 on our 7-segment displays
+// The lookup table for the 7-segment display
 byte seven_seg_digits[10][7] = { { 1,1,1,1,1,1,0 },  // = 0
                                  { 0,1,1,0,0,0,0 },  // = 1
                                  { 1,1,0,1,1,0,1 },  // = 2
@@ -71,88 +87,82 @@ byte seven_seg_digits[10][7] = { { 1,1,1,1,1,1,0 },  // = 0
                                  { 1,1,1,0,0,1,1 }   // = 9
                                  };
 
-
-
 #define NTASKS 10
 
-// possible states for our tasks to be in
-enum state {READY, RUNNING, SLEEPING};
-
-enum flagState {PENDING, DONE};
 
 /**
- * @brief Puts currently running function to sleep for t ms
- * @authors Sunny Hu, Peter Gunarso
- * @param t Number of ms for task to sleep for
+ * @brief Suspends the execution of the calling task for a specified time
+ * 
+ * @param t The time to sleep in milliseconds
  */
 void sleep_474(long t);
 
 /**
- * @brief Manages sleep time and clocks each task sees. If a task cannot sleep for any longer, wakes up the task.
- * @authors Sunny Hu, Peter Gunarso
+ * @brief Schedules the next task to run
+ * 
  */
 void schedule_sync();
 
 /**
- * @brief Sets the frequency of OC4A to match a given frequency freq
- * @authors Sunny Hu, Peter Gunarso
- * @param freq Desired frequency to set OC4A
+ * @brief Sets the frequency of the output compare register 4A
+ * 
+ * @param freq The frequency to set the output compare register to
  */
 void setOC4AFreq(uint32_t freq);
 
 /**
- * @brief Manages task 1 behavior, falshes an LED on and off
- * @authors Sunny Hu, Peter Gunarso
+ * @brief The first task to be executed
+ * 
  */
 void task1();
 
 /**
- * @brief Manages task 2 behavior, plays the theme from "Close Encounters of the Third Kind" once, pauses for 4 seconds, and plays again.
- * @authors Sunny Hu, Peter Gunarso
+ * @brief The second task to be executed
+ * 
  */
 void task2();
 
 /**
- * @brief Manages task 3 behavior, counts up by tenths of a second on 7-segment display
- * @author Peter Gunarso
+ * @brief The third task to be executed
+ * 
  */
 void task3();
 
 /**
- * @brief Converts an up to 4 digit number into an array of 4 ints, each representing a position in the value.
- * @author Sunny Hu
- * @param digits Output parameter, where the digits of val are stored
- * @param val Value to break up
+ * @brief Converts an integer value to an array of 7 digits
+ * 
+ * @param digits The array to store the converted digits
+ * @param val The integer value to convert
  */
 void convert(int * digits, int val);
 
 /**
- * @brief Sends 7 bits to 7-segment display to light corresponding segments.
- * @author Sunny Hu
- * @param arr Bit array to set a 7-segment display
+ * @brief Sends an array of 7 bytes to the 7-segment display
+ * 
+ * @param arr The array of bytes to send to the display
  */
 void send7(byte arr[7]);
 
 /**
- * @brief Sets up interrupts to run on timer 3 A, at a frequency of 500hz
- * @authors Sunny Hu, Peter Gunarso
+ * @brief Sets up the interrupts for the program
+ * 
  */
 void interruptSetup();
 
 /**
- * @brief Sets up timer and ports needed to drive a speaker using OC4A
- * @author Sunny Hu 
+ * @brief Sets up the speaker for the program
+ * 
  */
 void speakerSetup();
 
 /**
- * @brief Sets up the LED used for this lab
- * @authors Sunny Hu, Peter Gunarso
+ * @brief Sets up the LED for the program
+ * 
  */
 void ledSetup();
 
 /**
- * @brief Sets up DDR for our 7-segment display
- * @author Sunny Hu
+ * @brief Sets up the 7-segment display for the program
+ * 
  */
 void displaySetup();

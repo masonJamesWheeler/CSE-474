@@ -343,7 +343,7 @@ void setOC4AFreq(uint32_t freq) {
 void task1() {
   // reset everything given a reset signal
   if (reset1) {
-    LED_PORT |= BIT2; // turn off LED
+    LED_PORT &= ~BIT2; // turn off LED
     taskArr[currTask].time = 0; // reset time
     reset1 = 0; // reset reset signal
     return;
@@ -351,13 +351,13 @@ void task1() {
 
   // flash led on pin 47 for FLASH_DURATION
   if (taskArr[currTask].time < (1 * FLASH_DURATION) + 1) {
-    LED_PORT &= ~BIT2; // turn on LED
+    LED_PORT |= BIT2; // turn on LED
     sleep_474(250); // sleep for 250ms
     return;
   }
 
   if (taskArr[currTask].time < (2 * FLASH_DURATION) + 1) {
-    LED_PORT |= BIT2; // turn off LED
+    LED_PORT &= ~BIT2; // turn off LED
     sleep_474(750); // sleep for 750ms
     return;
   }

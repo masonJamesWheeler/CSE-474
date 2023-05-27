@@ -1,13 +1,11 @@
 /**
  * @file DDS.h
- * @authors Peter Gunarso, Sunny Hu
- * @brief Header file for demo5.ino
- * @version 0.1
- * @date 2021-05-19
- * 
- * @copyright Copyright (c) 2021
- * 
+ * @brief Header file for DDS project
+ * @authors 
+ *  - Mason Wheeler
+ * - Joey Pirich
  */
+
 #define BIT0 1<<0
 #define BIT1 1<<1
 #define BIT2 1<<2
@@ -32,7 +30,6 @@
 #define SPEAKER_PORT PORTH
 
 #define FLASH_DURATION 250
-#define NFLASH 3
 #define PLAY_DURATION 200
 #define ADURATION 2000
 #define CDURATION 10000

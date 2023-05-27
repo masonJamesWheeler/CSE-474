@@ -29,11 +29,11 @@ void task1() {
 
   // flash led on pin 47 for FLASH_DURATION
   if (time == (0 * FLASH_DURATION) + 1) {
-    LED_PORT &= ~BIT2;
+    LED_PORT |= BIT2;
   }
 
   if (time == (1 * FLASH_DURATION) + 1) {
-    LED_PORT |= BIT2;
+    LED_PORT &= ~BIT2;
   }
 
   if (time == 1000) {

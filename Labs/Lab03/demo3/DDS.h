@@ -1,37 +1,10 @@
-/*
- * FILE: DDS.h
- * AUTHORS: Mason and Joey
- * 
- * DESCRIPTION: This header file contains definitions for various constants and functions used in the DDS Task 3.
+/**
+ * @file DDS.h
+ * @brief Header file for DDS project
+ * @authors 
+ *  - Mason Wheeler
+ * - Joey Pirich
  */
-
-// Define bit masks for each bit
-#define BIT0 1<<0
-#define BIT1 1<<1
-#define BIT2 1<<2
-#define BIT3 1<<3
-
-// Define timer registers and mask
-#define TIMER_REG_A TCCR4A
-#define TIMER_REG_B TCCR4B
-#define TIMER_MASK TIMSK4
-#define TIMER_COUNTER TCNT4H
-
-// Define prescaler and LED and speaker pins
-#define PRESCALER OCR4A
-#define LED_DDR DDRL
-#define LED_PORT PORTL
-#define SPEAKER_DDR DDRH
-#define SPEAKER_PORT PORTH
-
-// Define durations for flashing and playing melody
-#define FLASH_DURATION 250
-#define NFLASH 3
-#define PLAY_DURATION 200
-#define ADURATION 2000
-#define CDURATION 10000
-#define PAUSE_DURATION 4000
-#define PICKUP_TIME (NMELODY * PLAY_DURATION) + PAUSE_DURATION
 
 // Define notes for the melody
 #define NOTE_C  262
@@ -61,6 +34,34 @@ int melody[] = {
   NOTE_G, 0, 0, NOTE_A, 0, NOTE_F, NOTE_G, 0,
   NOTE_E, 0, NOTE_C, NOTE_D, NOTE_B, 0, 0, NOTE_C5
 };
+
+// Define bit masks for each bit
+#define BIT0 1<<0
+#define BIT1 1<<1
+#define BIT2 1<<2
+#define BIT3 1<<3
+
+// Define timer registers and mask
+#define TIMER_REG_A TCCR4A
+#define TIMER_REG_B TCCR4B
+#define TIMER_MASK TIMSK4
+#define TIMER_COUNTER TCNT4H
+
+// Define prescaler and LED and speaker pins
+#define PRESCALER OCR4A
+#define LED_DDR DDRL
+#define LED_PORT PORTL
+#define SPEAKER_DDR DDRH
+#define SPEAKER_PORT PORTH
+
+// Define durations for flashing and playing melody
+#define FLASH_DURATION 250
+#define NFLASH 3
+#define PLAY_DURATION 200
+#define ADURATION 2000
+#define CDURATION 10000
+#define PAUSE_DURATION 4000
+#define PICKUP_TIME (NMELODY * PLAY_DURATION) + PAUSE_DURATION
 
 // Define the maximum number of tasks
 #define NTASKS 10
