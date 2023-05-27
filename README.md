@@ -2,9 +2,6 @@
 
 Welcome to my GitHub repository for CSE-474: Introduction to Embedded Systems! In this course, I have learned the specification, design, development, and testing of real-time embedded system software. Throughout the course, I have worked with a modern embedded microcomputer or microcontroller as a target environment for a series of laboratory projects and a comprehensive final project.
 
-![image](https://user-images.githubusercontent.com/106849824/236386513-d8e0fe8e-cd01-446b-9da2-492685e38bf3.png)
-
-
 ## Course Objectives
 
 By the end of the course, I have achieved:
