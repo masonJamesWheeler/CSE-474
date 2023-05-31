@@ -1,6 +1,7 @@
 /**
  * @file demo1.ino
- * @brief This file contains the code for Lab03 demo1. The authors of this file are Mason Wheeler and Joey Pirich.
+ * @brief This file contains the code for Lab03 demo1.
+ * @authors - Mason Wheeler and Joey Pirich
  */
 
 #include "RR.h"

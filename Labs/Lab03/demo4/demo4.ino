@@ -1,7 +1,7 @@
 /**
  * @file demo4.ino
  * @brief This file contains the code for a scheduler that manages multiple tasks on an Arduino board. 
- * The authors of this file are Mason Wheeler and Joey Pirich.
+ * @authors The authors of this file are Mason Wheeler and Joey Pirich.
  */
 
 #include "SRRI.h"
@@ -331,13 +331,6 @@ void send7(byte arr[7]) {
   PORTA = data; // send the data to the 7-segment display
 }
 
-/**
- * @file demo4.ino
- * @brief This file contains the implementation of the interruptSetup function.
- * 
- * This function sets up the timer to generate interrupts at a specified frequency.
- * 
- */
 
 /**
  * @brief Sets up the timer to generate interrupts at a specified frequency.
@@ -410,13 +403,6 @@ void speakerSetup() {
   SPEAKER_DDR |= BIT3;
 }
 
-/**
- * @file demo4.ino
- * @brief This file contains the implementation of the displaySetup function.
- * 
- * This function sets up the pins for the 7-segment display and digit selectors.
- * 
- */
 
 /**
  * @brief Sets up the pins for the 7-segment display and digit selectors.

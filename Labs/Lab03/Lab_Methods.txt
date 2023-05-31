@@ -66,3 +66,157 @@ Overall, the team successfully completed the lab, demonstrating their ability to
 
 Code Documentation:
 Here is a breakdown of the different functions we used in the code to implement the different schedulers:
+
+/**
+ * @brief Struct to hold all of a Tasks running state
+ * 
+ */
+typedef struct TCB {
+  /// Task name
+  char name[20];
+  /// Task function
+  void (*fn_ptr)();
+  /// Task id
+  int id;
+  /// Number of times task has been run
+  int nTimes;
+  /// Amount of time in ms the task should sleep for
+  int timeSleep;
+  /// Current clock time this task sees
+  long time;
+  /// Running state of this task
+  STATE state;
+} tcb;
+
+/**
+ * @brief Sleeps the current task for a specified amount of time
+ * 
+ * @param t The amount of time to sleep in milliseconds
+ */
+void sleep_474(long t);
+
+/**
+ * @brief Synchronizes the task scheduler with the timer
+ * 
+ */
+void schedule_sync();
+
+/**
+ * @brief Copies the contents of one TCB to another
+ * 
+ * @param dst The destination TCB
+ * @param src The source TCB
+ */
+void copy_tcb(tcb * dst, tcb * src);
+
+/**
+ * @brief Terminates the current task
+ * 
+ */
+void task_self_quit();
+
+/**
+ * @brief Starts a task
+ * 
+ * @param task The task to start
+ */
+void task_start(tcb * task);
+
+/**
+ * @brief Loads a task with a given function and name
+ * 
+ * @param fn_ptr The function to load
+ * @param name The name of the task
+ */
+void task_load(void (*fn_ptr)(), const char * name);
+
+/**
+ * @brief Finds a dead task with a given name
+ * 
+ * @param name The name of the task to find
+ * @return A pointer to the dead task, or NULL if not found
+ */
+tcb * find_dead_task(const char * name);
+
+/**
+ * @brief Sets the frequency of the DDS output
+ * 
+ * @param freq The frequency to set in Hz
+ */
+void setOC4AFreq(uint32_t freq);
+
+/**
+ * @brief Sends an array of bytes to the 7-segment display
+ * 
+ * @param arr The array of bytes to send
+ */
+void send7(byte arr[7]);
+
+/**
+ * @brief Converts an integer value to an array of digits
+ * 
+ * @param digits An array to store the digits in
+ * @param val The value to convert
+ */
+void convert(int * digits, int val);
+
+/**
+ * @brief Task 1 function
+ * 
+ */
+void task1();
+
+/**
+ * @brief Task 2 function
+ * 
+ */
+void task2();
+
+/**
+ * @brief Task 4.2 function
+ * 
+ */
+void task4_2();
+
+/**
+ * @brief Task 5 function
+ * 
+ */
+void task5();
+
+/**
+ * @brief Task 5.1 function
+ * 
+ */
+void task5_1();
+
+/**
+ * @brief Sets up interrupts
+ * 
+ */
+void interruptSetup();
+
+/**
+ * @brief Sets up the speaker
+ * 
+ */
+void speakerSetup();
+
+/**
+ * @brief Sets up the 7-segment display
+ * 
+ */
+void displaySetup();
+
+/**
+ * @brief Sets up the LED
+ * 
+ */
+void ledSetup();
+
+/**
+ * @brief Sets up the DDS
+ * 
+ */
+void DDSSetup();
+
