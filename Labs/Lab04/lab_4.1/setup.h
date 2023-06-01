@@ -2,7 +2,9 @@
  * @file setup.h
  * @brief Header file containing function prototypes and macros for Lab 4.1
  * @details This file contains the function prototypes and macros needed for Lab 4.1, including the melody notes, timer and port configurations, and task declarations.
- * @author 
+ * @authors
+ *  - Mason Wheeler
+ * - Joey Pirich
  */
 
 // Define notes for the melody
@@ -56,21 +58,9 @@ void Task34Starter(void * pvParameters);
 void Task3(void * pvParameters);
 void Task4(void * pvParameters);
 
-/**
- * @brief
- * @author
- */
+
 void ledSetup();
 
-/**
- * @brief Sets up timer and ports needed to drive a speaker using OC4A
- * @author Sunny Hu
- */
 void speakerSetup();
 
-/**
- * @brief Sets the frequency of OC4A to match a given frequency freq
- * @authors Sunny Hu, Peter Gunarso
- * @param freq Desired frequency to set OC4A
- */
 void setOC4AFreq(uint32_t freq);

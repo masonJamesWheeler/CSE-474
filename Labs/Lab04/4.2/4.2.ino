@@ -5,8 +5,6 @@
 #include <task.h>
 #include <Encoder.h>
 
-
-
 // the setup function runs once when you press reset or power the board
 bool joystickMoved = false;
 int joystickX = 0;
