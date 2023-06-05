@@ -1,3 +1,9 @@
+// Include necessary libraries. The arduinoFFT library allows for Fast Fourier Transform computations,
+// the sensors library is user-defined (presumably containing sensor related functions),
+// the Arduino_FreeRTOS is a real-time operating system for Arduino, 
+// the queue library allows for inter-task communication, 
+// task.h is the API for controlling real-time tasks, 
+// and Encoder.h is a library for reading rotary encoders.
 #include <arduinoFFT.h>
 #include "sensors.h"
 #include <Arduino_FreeRTOS.h>
@@ -5,38 +11,64 @@
 #include <task.h>
 #include <Encoder.h>
 
-// the setup function runs once when you press reset or power the board
+// The joystick variables store the current state of the joystick.
+// 'joystickMoved' is a boolean indicating whether the joystick has been moved,
+// 'joystickX' and 'joystickY' store the current X and Y positions of the joystick,
+// and 'joystickPressed' is a boolean indicating whether the joystick button has been pressed.
 bool joystickMoved = false;
 int joystickX = 0;
 int joystickY = 0;
 bool joystickPressed = false;
 
-int charIndex[LCD_COLS * LCD_ROWS];  // One for each character on the LCD
+// LCD related variables. 'charIndex' is an array storing the index of each character on the LCD,
+// and 'alphabetIndex' stores the current index in the alphabet (for scrolling through letters).
+int charIndex[LCD_COLS * LCD_ROWS];  
 int alphabetIndex = 0;
 
-char message[40];  // Make sure this is large enough to hold your formatted string
+// The 'message' variable is a string to store a formatted message that will be displayed on the LCD.
+char message[40];  
+
+// Score related variables. 'teamAScore' and 'teamBScore' store the current scores for each team,
+// 'quarter' stores the current quarter of the game,
+// 'teamAName' and 'teamBName' store the names of the teams.
 int teamAScore = 0;
 int teamBScore = 0;
 int quarter = 1;
-char teamAName[7] = "Team A";  // Increase size by 1 to accommodate null terminator
-char teamBName[7] = "Team B";  // Increase size by 1 to accommodate null terminator
-// Array to store the selected option of teamAScore, teamBScore, quarter, teamAName, teamBName
-// Add these variables
-int selectedOption = -1;  // -1 means no option is selected
-int selectedLetter = 0;  // Index of the selected letter in the alphabet
-int optionStartIndexes[] = {0, 10, 17, 22, 29};  // Start indexes of each option in the message
-int optionLengths[] = {6, 6, 2, 5, 2};  // Lengths of each option
-int numOptions = sizeof(optionStartIndexes) / sizeof(int);  // Number of options
+char teamAName[7] = "Team A";  
+char teamBName[7] = "Team B";  
+
+// Variables related to the selected option in a menu or interface.
+// 'selectedOption' stores the currently selected option,
+// 'selectedLetter' stores the index of the currently selected letter in the alphabet,
+// 'optionStartIndexes' is an array of the starting indexes of each option in the 'message' string,
+// 'optionLengths' is an array of the lengths of each option,
+// and 'numOptions' calculates the number of options based on the length of the 'optionStartIndexes' array.
+int selectedOption = -1;
+int selectedLetter = 0;  
+int optionStartIndexes[] = {0, 10, 17, 22, 29};  
+int optionLengths[] = {6, 6, 2, 5, 2};  
+int numOptions = sizeof(optionStartIndexes) / sizeof(int); 
+
+// A counter variable that starts at 600.
 static unsigned long count = 600;
-// Global variable to hold the encoder position
+
+// Variables related to the encoder position.
+// 'encoderPos' stores the current position of the encoder (and is volatile because it may be changed in an interrupt routine),
+// 'myEncoder' is an Encoder object,
+// and 'oldPosition' stores the previous position of the encoder.
 volatile long encoderPos = 0;
 Encoder myEncoder(ROTARY_CLK, ROTARY_DT);
 long oldPosition  = -999;
 
-
+// Timer related variables. 'timerMinutes' and 'timerSeconds' store the current time on a game timer.
 int timerMinutes = 12;
 int timerSeconds = 0;
 
+/**
+ * @brief Initializes the board and creates tasks for joystick input, LCD display, countdown timer, buzzer and LED, and rotary encoder.
+ * 
+ * @return void
+ */
 void setup() {
     // initialize serial communication at 9600 bits per second:
     Serial.begin(9600);
@@ -74,8 +106,6 @@ void setup() {
     xTaskCreate(TaskBuzzerAndLED, "BuzzerAndLED", 128, NULL, 1, NULL);
     xTaskCreate(TaskRotaryEncoder, "Encoder", 128, NULL, 1, NULL);
 
-
-
     // Start the scheduler
     vTaskStartScheduler();
 }
@@ -89,31 +119,36 @@ void setup() {
     /*---------------------- Tasks ---------------------*/
     /*--------------------------------------------------*/
 
-    /**
-     * @brief Task function to read joystick input and update global variables accordingly.
-     * 
-     * @param pvParameters Pointer to task parameters (not used in this function).
-     * @return void
-     */
-    void TaskJoyStick(void *pvParameters) {
-        for (;;) {
-            int x = analogRead(JOY_X);
-            int y = analogRead(JOY_Y);
-            int sw = digitalRead(JOY_SW);
+/**
+ * @brief Task function to read joystick input and update global variables accordingly.
+ * 
+ * @param pvParameters Pointer to task parameters (not used in this function).
+ * @return void
+ */
+void TaskJoyStick(void *pvParameters) {
+    for (;;) {
+        int x = analogRead(JOY_X);
+        int y = analogRead(JOY_Y);
+        int sw = digitalRead(JOY_SW);
 
-            if (x != 512 || y != 512 || sw == LOW) {  // If joystick is not in the stationary position
-                joystickMoved = true;
-                joystickX = x;
-                joystickY = y;
-                joystickPressed = (sw == LOW);
-            }
-            vTaskDelay(pdMS_TO_TICKS(100));  // Short delay before next read
+        if (x != 512 || y != 512 || sw == LOW) {  // If joystick is not in the stationary position
+            joystickMoved = true;
+            joystickX = x;
+            joystickY = y;
+            joystickPressed = (sw == LOW);
         }
+        vTaskDelay(pdMS_TO_TICKS(100));  // Short delay before next read
     }
+}
 
-    void TaskLCD(void *pvParameters) {
-
-
+/**
+ * @brief TaskLCD function that displays information on an LCD screen and handles user input from a joystick.
+ * 
+ * @param pvParameters void pointer to task parameters.
+ * 
+ * @return void.
+ */
+void TaskLCD(void *pvParameters) {
     int selectedOption = -1;  // -1 means no option is selected
     unsigned long lastBlinkTime = 0;
     bool blinkState = false;
@@ -226,11 +261,11 @@ void setup() {
                     lcdSetCursor(i % LCD_COLS, i / LCD_COLS);
                     lcdPrint(String(message[i]).c_str());
                 } else {
-                    lcdSetCursor(i % LCD_COLS, i / LCD_COLS);
+                    lcdSetCursor(i % LCD_COLS, i / LCD_ROWS);
                     lcdPrint(" ");
                 }
             } else {
-                lcdSetCursor(i % LCD_COLS, i / LCD_COLS);
+                lcdSetCursor(i % LCD_COLS, i / LCD_ROWS);
                 lcdPrint(String(message[i]).c_str());
             }
         }
@@ -239,6 +274,19 @@ void setup() {
     }
 }   
 
+/**
+ * @brief Task function to update and display a countdown timer on a 7-segment display.
+ * 
+ * This function updates and displays a countdown timer on a 7-segment display. The countdown timer
+ * is initialized to 10 minutes (600 seconds) and decrements by tenths of a second. The timer is
+ * only decremented if the CLOCK_SWITCH pin is HIGH. The function converts the countdown timer into
+ * minutes, seconds, and tenths, and then converts each of these values into separate digits to be
+ * displayed on the 7-segment display. The function uses a static array to store the display states
+ * of each digit, and cycles through these states to display each digit on the 7-segment display.
+ * 
+ * @param pvParameters Pointer to task parameters (not used in this function).
+ * @return void
+ */
 void TaskCountdown(void *pvParameters) {
     // Initialize the countdown timer to 10 minutes (600 seconds)
     count = 600; // Count in tenths of a second
@@ -274,86 +322,149 @@ void TaskCountdown(void *pvParameters) {
     }
 }
 
+/**
+ * @brief Sends a command to the LCD display.
+ * 
+ * This function sends a command to the LCD display by setting the RS pin to LOW and sending the command
+ * to the display through the D4, D5, D6, and D7 pins. It then pulses the EN pin to signal the
+ * display to read the command.
+ * 
+ * @param cmd The command to be sent to the display.
+ * @return void
+ */
+void lcdCommand(uint8_t cmd) {
+    digitalWrite(RS, LOW);  // Set RS pin to LOW to send command
+    digitalWrite(D4, (cmd >> 4) & 1);  // Send the first 4 bits of command through D4
+    digitalWrite(D5, (cmd >> 5) & 1);  // Send the next 4 bits of command through D5
+    digitalWrite(D6, (cmd >> 6) & 1);  // Send the next 4 bits of command through D6
+    digitalWrite(D7, (cmd >> 7) & 1);  // Send the last 4 bits of command through D7
+    digitalWrite(EN, HIGH);  // Pulse the EN pin to signal the display to read the command
+    delayMicroseconds(1);
+    digitalWrite(EN, LOW);
+    digitalWrite(D4, cmd & 1);  // Send the first 4 bits of command through D4
+    digitalWrite(D5, (cmd >> 1) & 1);  // Send the next 4 bits of command through D5
+    digitalWrite(D6, (cmd >> 2) & 1);  // Send the next 4 bits of command through D6
+    digitalWrite(D7, (cmd >> 3) & 1);  // Send the last 4 bits of command through D7
+    digitalWrite(EN, HIGH);  // Pulse the EN pin to signal the display to read the command
+    delayMicroseconds(1);
+    digitalWrite(EN, LOW);
+    delayMicroseconds(37);  // Wait for the command to be executed
+}
 
-    // functions for manual LCD control
-    void lcdCommand(uint8_t cmd) {
-        digitalWrite(RS, LOW);
-        digitalWrite(D4, (cmd >> 4) & 1);
-        digitalWrite(D5, (cmd >> 5) & 1);
-        digitalWrite(D6, (cmd >> 6) & 1);
-        digitalWrite(D7, (cmd >> 7) & 1);
-        digitalWrite(EN, HIGH);
-        delayMicroseconds(1);
-        digitalWrite(EN, LOW);
-        digitalWrite(D4, cmd & 1);
-        digitalWrite(D5, (cmd >> 1) & 1);
-        digitalWrite(D6, (cmd >> 2) & 1);
-        digitalWrite(D7, (cmd >> 3) & 1);
-        digitalWrite(EN, HIGH);
-        delayMicroseconds(1);
-        digitalWrite(EN, LOW);
-        delayMicroseconds(37);
+/**
+ * @brief Sends data to the LCD display.
+ * 
+ * This function sends data to the LCD display by setting the RS pin to HIGH and sending the data
+ * to the display through the D4, D5, D6, and D7 pins. It then pulses the EN pin to signal the
+ * display to read the data.
+ * 
+ * @param data The data to be sent to the display.
+ * @return void
+ */
+void lcdData(uint8_t data) {
+    digitalWrite(RS, HIGH);  // Set RS pin to HIGH to send data
+    digitalWrite(D4, (data >> 4) & 1);  // Send the first 4 bits of data through D4
+    digitalWrite(D5, (data >> 5) & 1);  // Send the next 4 bits of data through D5
+    digitalWrite(D6, (data >> 6) & 1);  // Send the next 4 bits of data through D6
+    digitalWrite(D7, (data >> 7) & 1);  // Send the last 4 bits of data through D7
+    digitalWrite(EN, HIGH);  // Pulse the EN pin to signal the display to read the data
+    delayMicroseconds(1);
+    digitalWrite(EN, LOW);
+    digitalWrite(D4, data & 1);  // Send the first 4 bits of data through D4
+    digitalWrite(D5, (data >> 1) & 1);  // Send the next 4 bits of data through D5
+    digitalWrite(D6, (data >> 2) & 1);  // Send the next 4 bits of data through D6
+    digitalWrite(D7, (data >> 3) & 1);  // Send the last 4 bits of data through D7
+    digitalWrite(EN, HIGH);  // Pulse the EN pin to signal the display to read the data
+    delayMicroseconds(1);
+    digitalWrite(EN, LOW);
+    delayMicroseconds(37);  // Wait for the display to process the data
+}
+
+/**
+ * @brief Initializes the LCD display.
+ * 
+ * This function initializes the LCD display by setting the pin modes for RS, EN, D4, D5, D6, and D7.
+ * It then sends a series of commands to the display to set it up for use.
+ * 
+ * @param None.
+ * @return void
+ */
+void lcdInit() {
+    pinMode(RS, OUTPUT);   // Set RS pin as output
+    pinMode(EN, OUTPUT);   // Set EN pin as output
+    pinMode(D4, OUTPUT);   // Set D4 pin as output
+    pinMode(D5, OUTPUT);   // Set D5 pin as output
+    pinMode(D6, OUTPUT);   // Set D6 pin as output
+    pinMode(D7, OUTPUT);   // Set D7 pin as output
+    delay(50);             // Wait for 50ms
+    lcdCommand(0x33);      // Send command to initialize the display
+    lcdCommand(0x32);      // Send command to initialize the display
+    lcdCommand(0x28);      // Send command to initialize the display
+    lcdCommand(0x0C);      // Send command to initialize the display
+    lcdCommand(0x06);      // Send command to initialize the display
+    lcdCommand(0x01);      // Send command to initialize the display
+    delay(2);              // Wait for 2ms
+}
+
+/**
+ * @brief Clears the LCD display.
+ * 
+ * This function sends the command to clear the LCD display and adds a delay of 2 milliseconds to allow the display to clear.
+ * 
+ * @param None.
+ * @return void
+ */
+void lcdClear() {
+    lcdCommand(0x01);
+    delay(2);
+}
+
+/**
+ * @brief Sets the cursor position on the LCD display.
+ * 
+ * This function sets the cursor position on the LCD display based on the given column and row values.
+ * If the given column value is greater than or equal to the number of columns on the display, it sets the column to the last column.
+ * If the given row value is greater than or equal to the number of rows on the display, it sets the row to the last row.
+ * 
+ * @param col The column number to set the cursor to.
+ * @param row The row number to set the cursor to.
+ * @return void
+ */
+void lcdSetCursor(uint8_t col, uint8_t row) {
+    if (col >= LCD_COLS) {
+        col = LCD_COLS - 1;
     }
-
-    void lcdData(uint8_t data) {
-        digitalWrite(RS, HIGH);
-        digitalWrite(D4, (data >> 4) & 1);
-        digitalWrite(D5, (data>> 5) & 1);
-        digitalWrite(D6, (data >> 6) & 1);
-        digitalWrite(D7, (data >> 7) & 1);
-        digitalWrite(EN, HIGH);
-        delayMicroseconds(1);
-        digitalWrite(EN, LOW);
-        digitalWrite(D4, data & 1);
-        digitalWrite(D5, (data >> 1) & 1);
-        digitalWrite(D6, (data >> 2) & 1);
-        digitalWrite(D7, (data >> 3) & 1);
-        digitalWrite(EN, HIGH);
-        delayMicroseconds(1);
-        digitalWrite(EN, LOW);
-        delayMicroseconds(37);
+    if (row >= LCD_ROWS) {
+        row = LCD_ROWS - 1;
     }
+    uint8_t address = (row == 0) ? 0x00 + col : 0x40 + col;
+    lcdCommand(0x80 | address);
+}
 
-    void lcdInit() {
-        pinMode(RS, OUTPUT);
-        pinMode(EN, OUTPUT);
-        pinMode(D4, OUTPUT);
-        pinMode(D5, OUTPUT);
-        pinMode(D6, OUTPUT);
-        pinMode(D7, OUTPUT);
-        delay(50);
-        lcdCommand(0x33);
-        lcdCommand(0x32);
-        lcdCommand(0x28);
-        lcdCommand(0x0C);
-        lcdCommand(0x06);
-        lcdCommand(0x01);
-        delay(2);
-    }
+    /**
+     * @brief Prints a string to the LCD display.
+     * 
+     * This function prints a string to the LCD display by iterating through each character in the string and sending it to the lcdData function.
+     * 
+     * @param str Pointer to the string to be printed.
+     * @return void
+     */
+void lcdPrint(const char* str) {
+    while (*str) {
+        lcdData(*str++);
+    }    
+}
 
-    void lcdClear() {
-        lcdCommand(0x01);
-        delay(2);
-    }
-
-    void lcdSetCursor(uint8_t col, uint8_t row) {
-        if (col >= LCD_COLS) {
-            col = LCD_COLS - 1;
-        }
-        if (row >= LCD_ROWS) {
-            row = LCD_ROWS - 1;
-        }
-        uint8_t address = (row == 0) ? 0x00 + col : 0x40 + col;
-        lcdCommand(0x80 | address);
-    }
-
-    void lcdPrint(const char* str) {
-        while (*str) {
-            lcdData(*str++);
-        }    
-    }
-
-    void TaskBuzzerAndLED(void *pvParameters) {
+/**
+ * @brief Task function to control the buzzer and LED based on button press and timer countdown.
+ * 
+ * This function checks if the button is pressed or the timer has hit zero, and turns on the buzzer and LED accordingly.
+ * If the button is not pressed and the timer has not hit zero, the buzzer and LED are turned off.
+ * 
+ * @param pvParameters Pointer to task parameters (not used in this function).
+ * @return void
+ */
+void TaskBuzzerAndLED(void *pvParameters) {
     for (;;) {
         // Check if the button is pressed or the timer hit zero
         if (digitalRead(BUTTON_PIN) == HIGH || count == 0) {
@@ -376,37 +487,57 @@ void TaskCountdown(void *pvParameters) {
     }
 }
 
+/**
+ * @brief Task function to read the rotary encoder input and update the global count variable accordingly.
+ * 
+ * This function reads the rotary encoder input and updates the global count variable based on the direction of rotation.
+ * If the rotary encoder button is pressed, the count variable is reset to 600 and the encoder's position is set to 0.
+ * 
+ * @param pvParameters Pointer to task parameters (not used in this function).
+ * @return void
+ */
 void TaskRotaryEncoder(void *pvParameters) {
-  for (;;) {
-    long newPosition = myEncoder.read();
-    if (newPosition != oldPosition) {
-      if (newPosition > oldPosition) {
-        count = count + 10;
-      } else if (newPosition < oldPosition) {
-        count = count - 10;
-      }
-      Serial.println(count);
-      oldPosition = newPosition;
-    }
+    for (;;) {
+        long newPosition = myEncoder.read();
+        if (newPosition != oldPosition) {
+            if (newPosition > oldPosition) {
+                count = count + 10;
+            } else if (newPosition < oldPosition) {
+                count = count - 10;
+            }
+            Serial.println(count);
+            oldPosition = newPosition;
+        }
 
-    if (digitalRead(ROTARY_SW) == LOW) {
-      count = 600;
-      myEncoder.write(0); // We reset the encoder's position to 0
-      Serial.println(count);
-    }
+        if (digitalRead(ROTARY_SW) == LOW) {
+            count = 600;
+            myEncoder.write(0); // We reset the encoder's position to 0
+            Serial.println(count);
+        }
 
-    vTaskDelay(pdMS_TO_TICKS(10));
-  }
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
 }
 
-
-
+/**
+ * @brief Converts the input time values into an array of digits.
+ * 
+ * This function takes in the input time values (minutes, seconds, and tenths) and separates
+ * their digits, storing them in an array. The array is passed in as a pointer to an integer.
+ * 
+ * @param digits Pointer to an integer array to store the separated digits.
+ * @param minutes The number of minutes in the input time.
+ * @param seconds The number of seconds in the input time.
+ * @param tenths The number of tenths of a second in the input time.
+ * 
+ * @return void
+ */
 void convert(int * digits, int minutes, int seconds, int tenths) {
-  // Separate the digits of the minutes, seconds, and tenths and store them in the array
-  digits[0] = tenths;
-  digits[1] = seconds % 10;
-  digits[2] = (seconds/10) % 10;
-  digits[3] = minutes;
+    // Separate the digits of the minutes, seconds, and tenths and store them in the array
+    digits[0] = tenths;
+    digits[1] = seconds % 10;
+    digits[2] = (seconds/10) % 10;
+    digits[3] = minutes;
 }
     
 /**
