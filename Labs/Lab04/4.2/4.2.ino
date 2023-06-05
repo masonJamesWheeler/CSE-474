@@ -1,11 +1,11 @@
 // Include necessary libraries. The arduinoFFT library allows for Fast Fourier Transform computations,
-// the sensors library is user-defined (presumably containing sensor related functions),
+// the Final library is user-defined containg definitions for our final project,
 // the Arduino_FreeRTOS is a real-time operating system for Arduino, 
 // the queue library allows for inter-task communication, 
 // task.h is the API for controlling real-time tasks, 
 // and Encoder.h is a library for reading rotary encoders.
 #include <arduinoFFT.h>
-#include "sensors.h"
+#include "Final.h"
 #include <Arduino_FreeRTOS.h>
 #include <queue.h>
 #include <task.h>
@@ -65,7 +65,7 @@ int timerMinutes = 12;
 int timerSeconds = 0;
 
 /**
- * @brief Initializes the board and creates tasks for joystick input, LCD display, countdown timer, buzzer and LED, and rotary encoder.
+ * @brief Initializes the board and creates tasks for joystick input, LCD screen update, countdown, buzzer and LED control, and rotary encoder input.
  * 
  * @return void
  */
@@ -86,6 +86,7 @@ void setup() {
     pinMode(ROTARY_CLK, INPUT);
     pinMode(ROTARY_DT, INPUT);
     pinMode(ROTARY_SW, INPUT_PULLUP);  // Enable internal pull-up resistor
+    pinMode(OFFBOARD_LED_PIN, OUTPUT); // initialize off-board LED pin as output:
 
     // initialize 7-segment display
     displaySetup();
@@ -105,6 +106,8 @@ void setup() {
     xTaskCreate(TaskCountdown, "Countdown", 128, NULL, 1, NULL);
     xTaskCreate(TaskBuzzerAndLED, "BuzzerAndLED", 128, NULL, 1, NULL);
     xTaskCreate(TaskRotaryEncoder, "Encoder", 128, NULL, 1, NULL);
+    xTaskCreate(TaskLEDFlash, "LEDFlash", 128, NULL, 1, NULL);  // Add the new task here
+
 
     // Start the scheduler
     vTaskStartScheduler();
@@ -119,36 +122,48 @@ void setup() {
     /*---------------------- Tasks ---------------------*/
     /*--------------------------------------------------*/
 
+    /**
+     * @brief Task function to read joystick input and update global variables accordingly.
+     * 
+     * @param pvParameters Pointer to task parameters (not used in this function).
+     * @return void
+     */
+    void TaskJoyStick(void *pvParameters) {
+        for (;;) {
+            int x = analogRead(JOY_X);
+            int y = analogRead(JOY_Y);
+            int sw = digitalRead(JOY_SW);
+
+            if (x != 512 || y != 512 || sw == LOW) {  // If joystick is not in the stationary position
+                joystickMoved = true;
+                joystickX = x;
+                joystickY = y;
+                joystickPressed = (sw == LOW);
+            }
+            vTaskDelay(pdMS_TO_TICKS(100));  // Short delay before next read
+        }
+    }
 /**
- * @brief Task function to read joystick input and update global variables accordingly.
+ * @brief Task function to update the LCD screen.
+ *      This task should be responsible for updating the LCD screen based on the joystick input.
+ *    The LCD screen should display the following information:
+ *    - Team A name
+ *   - Team B name
+ *  - Team A score
+ * - Team B score
+ * - Quarter
+ * 
+ * The LCD screen should also display a blinking cursor to indicate which option is selected.
+ * 
+ * The LCD screen should be updated every 100 ms.
  * 
  * @param pvParameters Pointer to task parameters (not used in this function).
+ * 
  * @return void
- */
-void TaskJoyStick(void *pvParameters) {
-    for (;;) {
-        int x = analogRead(JOY_X);
-        int y = analogRead(JOY_Y);
-        int sw = digitalRead(JOY_SW);
-
-        if (x != 512 || y != 512 || sw == LOW) {  // If joystick is not in the stationary position
-            joystickMoved = true;
-            joystickX = x;
-            joystickY = y;
-            joystickPressed = (sw == LOW);
-        }
-        vTaskDelay(pdMS_TO_TICKS(100));  // Short delay before next read
-    }
-}
-
-/**
- * @brief TaskLCD function that displays information on an LCD screen and handles user input from a joystick.
  * 
- * @param pvParameters void pointer to task parameters.
  * 
- * @return void.
- */
-void TaskLCD(void *pvParameters) {
+*/
+ void TaskLCD(void *pvParameters) {
     int selectedOption = -1;  // -1 means no option is selected
     unsigned long lastBlinkTime = 0;
     bool blinkState = false;
@@ -261,11 +276,11 @@ void TaskLCD(void *pvParameters) {
                     lcdSetCursor(i % LCD_COLS, i / LCD_COLS);
                     lcdPrint(String(message[i]).c_str());
                 } else {
-                    lcdSetCursor(i % LCD_COLS, i / LCD_ROWS);
+                    lcdSetCursor(i % LCD_COLS, i / LCD_COLS);
                     lcdPrint(" ");
                 }
             } else {
-                lcdSetCursor(i % LCD_COLS, i / LCD_ROWS);
+                lcdSetCursor(i % LCD_COLS, i / LCD_COLS);
                 lcdPrint(String(message[i]).c_str());
             }
         }
@@ -516,6 +531,21 @@ void TaskRotaryEncoder(void *pvParameters) {
         }
 
         vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
+/**
+ * @brief Task function to flash an off-board LED on and off. The LED is ON for 100ms and OFF for 200ms.
+ * 
+ * @param pvParameters Pointer to task parameters (not used in this function).
+ * @return void
+ */
+void TaskLEDFlash(void *pvParameters) {
+    for (;;) {
+        digitalWrite(OFFBOARD_LED_PIN, HIGH);  // Turn on the LED
+        vTaskDelay(pdMS_TO_TICKS(100));       // Delay for 100ms
+        digitalWrite(OFFBOARD_LED_PIN, LOW);   // Turn off the LED
+        vTaskDelay(pdMS_TO_TICKS(200));       // Delay for 200ms
     }
 }
 
