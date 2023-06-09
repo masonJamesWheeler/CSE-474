@@ -1,5 +1,5 @@
 /**
- * @file sensors.h
+ * @file Final.h
  * @brief Header file containing function prototypes and macros for sensor reading
  * @details This file contains the function prototypes and macros needed for reading from three sensors and performing an action if any of them is high.
  * @authors
@@ -207,3 +207,5 @@ void TaskBuzzerAndLED(void *pvParameters);
  * @return void.
  */
 void TaskRotaryEncoder(void *pvParameters);
+
+

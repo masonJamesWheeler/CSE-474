@@ -602,3 +602,4 @@ void displaySetup() {
 
   PORTB |= BIT7 | BIT6 | BIT5 | BIT4; // set pins 4-7 on PORTB to HIGH
 }
+
