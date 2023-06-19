@@ -46,7 +46,7 @@ CSE-474
 
 ## Getting Started
 
-1. Clone this repository to your local machine using `git clone https://github.com/yourusername/CSE-474.git`
+1. Clone this repository to your local machine using `git clone https://github.com/masonJamesWheeler/CSE-474.git`
 2. Navigate to the directory of the lab or project you want to work on.
 3. Follow the instructions in the corresponding `README.md` file for each lab/project.
 4. Build, test, and debug your embedded software solutions.
